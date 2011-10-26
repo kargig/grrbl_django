@@ -1,0 +1,24 @@
+{% extends "grrbl/grrbl.html" %}
+
+{% block title %}
+Listing
+{% endblock %}
+
+{% block content %}
+{% if user.is_authenticated %}
+      <h2>{{ user.username }} This is the Blacklist</h2>
+{% else %}
+   <h2>Welcome, Anonymous user. Please log in if you want to see the list.</h2>
+{% endif %}
+{% if object_list %}
+    <ul>
+    {% for object in object_list %}
+        <li><a href="/grrbl/details/{{ object.id }}/">{{ object.ipaddress }}</a></li>
+    {% endfor %}
+    </ul>
+{% else %}
+    <p>No IPs in the Blacklist.</p>
+{% endif %}
+
+<p><a href="/admin/grrbl/ip/add/">Add a new entry</a></p>
+{% endblock %}

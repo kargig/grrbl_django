@@ -1,0 +1,29 @@
+{% extends "grrbl/grrbl.html" %}
+
+{% block title %}
+Details
+{% endblock %}
+
+{% block content %}
+<h1>{{ object.ipaddress }} </h1>
+<h3>{{ object.get_b_or_w_display }} added on {{ object.dateadded }} by {{ object.reportedby }}</h3>
+<br>
+Last update on {{ object.updated }}
+<br>
+Further info: {{ object.attacknotes }}<br>
+Curent Votes: {{ object.votes }}
+{% if error_message %}
+<p><strong>{{ error_message }}</strong></p>
+{% endif %}
+
+<form action="/grrbl/details/{{ object.id }}/vote/" method="post">
+	{% csrf_token %}
+	<select name="vote">
+			<option value="-1">- DownVote -</option>
+			<option value="0" selected="true">- Neutral -</option>
+			<option value="1">- UpVote -</option>
+	</select>
+
+	<input type="submit" value="vote" />
+</form>
+{% endblock %}
