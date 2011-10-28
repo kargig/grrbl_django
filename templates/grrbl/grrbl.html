@@ -9,12 +9,17 @@ This is the main template for all portal pages.
 
 {% block body %}
     <header>
-        <h1>GrRBL | Web Site</h1>
+	<h1>GrRBL<br>
+	RBL and email blacklist against Greek Spam</h1>
+	  <style type='text/css'>
+		@import url('/static/grrbl.css');
+	  </style>
     </header>
 
     <section>
         <ul>
             <li><a href="/grrbl/">home</a></li>
+            <li><a href="/grrbl/list/">listing</a></li>
             <li><a href="/grrbl/logout/">logout</a></li>
         </ul>
     </section>

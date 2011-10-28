@@ -6,7 +6,7 @@ Main page of the portal.
 {% endcomment %}
 
 {% block title %}
-Portal
+GrRBL - RBL and email blacklist against Greek Spam
 {% endblock %}
 
 {% block content %}
@@ -16,9 +16,77 @@ Portal
 		{% else %}
 	    <h2>Welcome, Anonymous user. Please log in if you want to vote.</h2>
 		{% endif %}
-        <p>This is the main page of the web portal.</p>
     </section>
     <section>
-	<h2>visit the list of blacklisted addresses <a href="/grrbl/list/">List</a></h2>
+<h2>What is it?</h2> 
+
+<ul id="toc">
+    <li><a href="#proposedUsage">Proposed Usage</a></li>
+    <li><a href="#alternateUsage">Alternate Usage</a></li>
+    <li><a href="#email_blacklist">Greek Spammers Email Addresses Blacklist</a></li>
+    <li><a href="#submissions">Submissions</a></li>
+    <li><a href="#listing">List of Blacklisted Addresses</a></li>
+    <li><a href="#disclaimer">Disclaimer</a></li>
+</ul>
+
+<p>It’s been some months now that I’ve started collecting some IP addresses of well known Greek spammers and I’ve put them on an <a target="_blank" href="http://en.wikipedia.org/wiki/DNSBL">DNSBL</a>. I’ve named this list GrRBL. The software I use to run the list is <a target="_blank" href="http://www.corpit.ru/mjt/rbldnsd.html">rbldnsd</a>.</p>
+
+<p>The list is strictly moderated by me and only me and I try to be very selective on hosts I add to the list. The list contains hosts not only in .gr zone but also “foreign” hosts used to send spam messages either in Greek language or of Greek interest.</p>
+
+<p>There are currently no statistics and no public listing of IPs in the blacklist. If there’s enough demand for statistics I might create some.</p>
+
+<p>There’s also NO automatic deletion support, once an IP is in the list there’s no automatic way out. Since I am the only one adding IPs to the list, I am also the only one removing them, manually of course.</p>
+
+<h2><a name="proposedUsage">Proposed Usage</a></h2>
+  <h3>Spamassassin</h3>
+  <p>In your local.cf (or so), use the following code:
+</p><pre>header          RCVD_IN_GRRBL   eval:check_rbl('grrbl', 'rbl.void.gr')
+describe        RCVD_IN_GRRBL   Listed in rbl.void.gr
+tflags          RCVD_IN_GRRBL   net
+score           RCVD_IN_GRRBL   0 4.0 0 4.0
+</pre>
+   <p>This will give messages from any ip which is on GrRBL an extra score
+of four points.</p>
+
+  <h2><a name="alternateUsage">Alternate Usage</a></h2>
+  <h3>Exim</h3>
+  <p>In an Exim ACL, use the following code:
+</p><pre># Block all connections from hosts on GrRBL
+deny
+     message  = Connection blocked. You are on $dnslist_domain ($dnslist_text)
+     dnslists = rbl.void.gr
+</pre>
+   <p>This will deny messages from any ip which is on GrRBL</p>
+
+  <h3>Sendmail</h3>
+  <p>Add the following line to your sendmail.mc, rebuild your
+sendmail.cf and restart sendmail.
+
+  </p><pre>FEATURE(`enhdnsbl', `rbl.void.gr', ``Mail from $&amp;{client_addr} rejected, see http://grrbl.void.gr/'',`t')dnl</pre>
+  <p></p>
+  <h3>Postfix</h3>
+  <p>In main.cf, add the following line:
+</p><pre>smtpd_recipient_restrictions = reject_rbl_client rbl.void.gr
+</pre>
+   <p>This will deny messages from any ip which is on GrRBL</p>
+
+
+<h2><a name="email_blacklist">pet-project: Greek Spammers Email Addresses Blacklist</a></h2>
+<p>GrRBL has now a pet-project, Greek Spammers Email Addresses Blacklist. Apart from collecting IPs over the years, I have also collected e-mail addresses of well-known spammers who send spam messages either in Greek language or of Greek interest. This list is going to be updated every now and then to include verified e-mail addresses. For now this list is placed at: <br><b><a target="_blank" href="http://grrbl.void.gr/blacklist.cf.asc">Greek Spammers Email Addresses Blacklist</a></b>.</p>
+<p>Usage: The list can be used directly by spamassassin. Just strip the signature and place blacklist.cf at /etc/mail/spamassassin/ and it will include it automagically (after a spamassassin restart).</p>
+
+<h2><a name="submissions">Submissions</a></h2>
+<p>If you want to add an entry and help us out please use the following form: <a href="/admin/grrbl/ip/add/">Add IP address to
+	GrRBL</a>.
+<br>You need to be registered to use the form
+</p>
+
+<h2><a name="listing">List of Blacklisted Addresses</a></h2>
+<p>visit the list of blacklisted addresses <a href="/grrbl/list/">List</a> (For registered Users only)</p>
+
+<h2><a name="disclaimer">Disclaimer</a></h2>
+<p>Even though I use GrRBL/Greek Spammers Email Addresses Blacklist in all of the mail servers I own/manage, still I consider the service as beta. I don’t think it’s ever going to eat your emails, but you are still the only one responsible if this happens.</p>
     </section>
+
+
 {% endblock %}
