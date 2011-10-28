@@ -1,4 +1,4 @@
-from grrbl.models import IP
+from grrbl.models import IP,Vote
 from django.contrib import admin
 from django.contrib.auth.admin import UserAdmin,GroupAdmin
 from django.contrib.auth.models import User,Group
@@ -10,6 +10,11 @@ class IPAdmin(admin.ModelAdmin):
     list_display = ('ipaddress', 'dateadded', 'b_or_w', 'votes' )
 
 admin.site.register(IP, IPAdmin)
+
+class VoteAdmin(admin.ModelAdmin):
+    list_display = ('user', 'ipaddress', 'vote' )
+
+admin.site.register(Vote,VoteAdmin)
 
 class UserProfileInline(admin.TabularInline):
     model = UserProfile

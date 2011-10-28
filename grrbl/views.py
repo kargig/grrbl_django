@@ -33,16 +33,38 @@ def auth_list(*args, **kwargs):
 
 @login_required
 def vote(request, ip_id):
-    p = get_object_or_404(IPS, pk=ip_id)
+    p = get_object_or_404(IP, pk=ip_id)
     try:
         selected_ip = p #change to if user has voted this IP before
-    except (KeyError, IPS.DoesNotExist):
+    except (KeyError, IP.DoesNotExist):
         # Redisplay the poll voting form.
         return render_to_response('grrbl/detail.html', {
             'ips': p,
             'error_message': "You didn't select a choice.",
         }, context_instance=RequestContext(request))
     else:
-        selected_ip.votes += int(request.POST['vote'])
-        selected_ip.save()
-        return HttpResponseRedirect(reverse('ip_details', args=(p.id,)))
+        try:
+            v = Vote.objects.get(user=request.user, ipaddress=selected_ip)
+            selected_ip.votes -= v.vote
+            selected_ip.save()
+            v.vote = int(request.POST['vote'])
+            v.save()
+            print "DEBUG"
+        except (KeyError, Vote.DoesNotExist):
+            v = Vote.objects.get_or_create(user=request.user,
+                    ipaddress=selected_ip, vote=int(request.POST['vote']))
+            selected_ip.votes += int(request.POST['vote'])
+            selected_ip.save()
+            return HttpResponseRedirect(reverse('ip_details', args=(p.id,)))
+        except (KeyError, Vote.MultipleObjectsReturned):
+            return render_to_response('grrbl/detail.html', {
+            'ips': p,
+            'error_message': "You have voted already.",
+        }, context_instance=RequestContext(request))
+        else:
+            selected_ip.votes += int(request.POST['vote'])
+            selected_ip.save()
+            return HttpResponseRedirect(reverse('ip_details', args=(p.id,)))
+
+#        v = Vote(user=request.user, ipaddress=selected_ip , vote=int(request.POST['vote']))
+#        v.save()
