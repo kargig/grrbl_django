@@ -44,19 +44,18 @@ def vote(request, ip_id):
         }, context_instance=RequestContext(request))
     else:
         try:
-            v = Vote.objects.get(user=request.user, ipaddress=selected_ip)
+            v = VoteIP.objects.get(user=request.user, ipaddress=selected_ip)
             selected_ip.votes -= v.vote
             selected_ip.save()
             v.vote = int(request.POST['vote'])
             v.save()
-            print "DEBUG"
-        except (KeyError, Vote.DoesNotExist):
-            v = Vote.objects.get_or_create(user=request.user,
+        except (KeyError, VoteIP.DoesNotExist):
+            v = VoteIP.objects.get_or_create(user=request.user,
                     ipaddress=selected_ip, vote=int(request.POST['vote']))
             selected_ip.votes += int(request.POST['vote'])
             selected_ip.save()
             return HttpResponseRedirect(reverse('ip_details', args=(p.id,)))
-        except (KeyError, Vote.MultipleObjectsReturned):
+        except (KeyError, VoteIP.MultipleObjectsReturned):
             return render_to_response('grrbl/detail.html', {
             'ips': p,
             'error_message': "You have voted already.",
@@ -65,6 +64,3 @@ def vote(request, ip_id):
             selected_ip.votes += int(request.POST['vote'])
             selected_ip.save()
             return HttpResponseRedirect(reverse('ip_details', args=(p.id,)))
-
-#        v = Vote(user=request.user, ipaddress=selected_ip , vote=int(request.POST['vote']))
-#        v.save()

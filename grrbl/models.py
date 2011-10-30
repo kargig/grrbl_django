@@ -27,7 +27,7 @@ class IPform(ModelForm):
     class Meta:
         model = IP
 
-class Vote(models.Model):
+class VoteIP(models.Model):
     user       = models.ForeignKey(User)
     ipaddress  = models.ForeignKey(IP)
     date       = models.DateTimeField('date added',auto_now_add=True)
