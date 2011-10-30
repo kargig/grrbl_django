@@ -40,6 +40,16 @@ class CustomGroupAdmin(GroupAdmin):
     def get_maxvotes(self, object):
         return object.groupprofile.maxvotes
     get_maxvotes.short_description = 'Max votes'
+
+    def save_formset(self, request, form, formset, change):
+        # We override save_formset, in order to ensure that we always create an
+        # associated group profile, even when the user doesn't change the
+        # default values of the TabularInline form.
+        saved = formset.save()
+        if not change and not saved:
+            # We are creating a new group and no associated profiles were created
+            profile = GroupProfile.objects.create(group=form.instance)
+            profile.save()
     
 admin.site.unregister(Group)
 admin.site.register(Group, CustomGroupAdmin)

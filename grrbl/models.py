@@ -53,37 +53,3 @@ class GroupProfile(models.Model):
     def __unicode__(self):
         return self.group.name
 
-
-#ver1 -- works only with default values
-def create_group_profile0(sender, **kw):
-    mygroup = kw["instance"]
-    if kw["created"]:
-        profile = GroupProfile.objects.get_or_create(group=mygroup)
-
-#ver2 -- works only with default values
-def create_group_profile1(sender, **kw):
-    mygroup = kw["instance"]
-    if kw["created"]:
-        profile = GroupProfile(group=mygroup)
-        profile.save()
-
-#ver3 -- works only with default values
-def create_group_profile2(sender, instance, created, **kwargs):
-    """Create a matching profile whenever a user object is created."""
-    if created: 
-        profile, new = GroupProfile.objects.get_or_create(group=instance)
-
-#ver4 -- works only with default values
-def create_group_profile3(sender, instance, created, **kwargs):
-    """Create the GroupProfile when a new Group is saved"""
-    if created:
-        profile, new = GroupProfile.objects.get_or_create(group=instance)
-        if new:
-            profile.save()
-
-#ver5 -- works only with default values
-def create_group_profile4(sender, instance, created, **kwargs):
-    if created:
-        GroupProfile.objects.get_or_create(group=instance)
-
-post_save.connect(create_group_profile3, sender=Group, dispatch_uid="group-profile-create-signal")
