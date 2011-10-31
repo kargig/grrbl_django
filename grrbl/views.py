@@ -59,7 +59,7 @@ def vote(request, object_type, object_id):
         # Subtract the previous vote value
         objekt.votes -= vote.vote
     except Vote.DoesNotExist:
-        vote = Vote(user=request.user, item=objekt, vote=int(request.POST['vote']))
+        vote = Vote(user=request.user, item=objekt)
 
     vote.vote = vote_value
     objekt.votes += vote_value
