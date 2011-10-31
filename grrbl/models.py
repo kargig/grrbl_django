@@ -1,7 +1,7 @@
 from django import forms
 from django.db import models
 from django.forms import ModelForm
-from django.db.models.signals import post_save
+from django.db.models.signals import pre_delete
 from django.contrib.auth.models import User,Group
 from django.contrib.contenttypes.models import ContentType
 from django.contrib.contenttypes import generic
@@ -85,3 +85,13 @@ class GroupProfile(models.Model):
     def __unicode__(self):
         return self.group.name
 
+
+def revert_vote(sender, **kwargs):
+    assert sender == Vote
+    assert "instance" in kwargs
+    instance = kwargs["instance"]
+    # Revert the vote before deleting
+    instance.item.votes -= instance.vote
+    instance.item.save()
+
+pre_delete.connect(revert_vote, sender=Vote)
