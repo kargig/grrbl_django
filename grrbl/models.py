@@ -62,6 +62,9 @@ class Vote(models.Model):
     date       = models.DateTimeField('date added',auto_now_add=True)
     vote       = models.IntegerField(default=0)
 
+    def __unicode__(self):
+        return "%s on %s (%d)" % (self.user, self.item, self.vote)
+
 
 class UserProfile(models.Model):
     user = models.OneToOneField(User)
