@@ -1,4 +1,5 @@
 {% extends "grrbl/grrbl.html" %}
+{% load class_name %}
 
 {% block title %}
 Details
@@ -16,7 +17,7 @@ Curent Votes: {{ object.votes }}
 <p><strong>{{ error_message }}</strong></p>
 {% endif %}
 
-<form action="/grrbl/details/{{ object.id }}/vote/" method="post">
+<form action="{% url grrbl.views.vote object|class_name|lower object.id %}" method="post">
 	{% csrf_token %}
 	<select name="vote">
 			<option value="-1">- DownVote -</option>

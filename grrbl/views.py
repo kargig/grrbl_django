@@ -9,7 +9,7 @@ from django.views.generic.list_detail import object_list
 from django.contrib.auth.decorators import login_required
 from grrbl.models import *
 from django.core.urlresolvers import reverse
-
+from django.contrib.contenttypes.models import ContentType
 from django.http import HttpResponseRedirect
 
 def logout_page(request):
@@ -19,6 +19,7 @@ def logout_page(request):
     logout(request)
     return HttpResponseRedirect('/grrbl/logout.html')
 
+
 #@login_required
 def main_page(request):
     """
@@ -27,40 +28,40 @@ def main_page(request):
     """
     return render_to_response('grrbl/index.html')
 
+
 @login_required 
 def auth_list(*args, **kwargs):
         return object_list(*args, **kwargs) 
 
+
 @login_required
-def vote(request, ip_id):
-    p = get_object_or_404(IP, pk=ip_id)
+def vote(request, object_type, object_id):
+    # Fetch the equivalend content types
+    content_type = get_object_or_404(ContentType, app_label="grrbl", name=object_type)
+    # Get the model classes
+    object_class = content_type.model_class()
+
+    objekt = get_object_or_404(object_class, pk=object_id)
+    if not isinstance(objekt, VotableObject):
+        raise "Will not add vote to a non-votable object"
+
     try:
-        selected_ip = p #change to if user has voted this IP before
-    except (KeyError, IP.DoesNotExist):
-        # Redisplay the poll voting form.
-        return render_to_response('grrbl/detail.html', {
-            'ips': p,
-            'error_message': "You didn't select a choice.",
-        }, context_instance=RequestContext(request))
-    else:
-        try:
-            v = VoteIP.objects.get(user=request.user, ipaddress=selected_ip)
-            selected_ip.votes -= v.vote
-            selected_ip.save()
-            v.vote = int(request.POST['vote'])
-            v.save()
-        except (KeyError, VoteIP.DoesNotExist):
-            v = VoteIP.objects.get_or_create(user=request.user,
-                    ipaddress=selected_ip, vote=int(request.POST['vote']))
-            selected_ip.votes += int(request.POST['vote'])
-            selected_ip.save()
-            return HttpResponseRedirect(reverse('ip_details', args=(p.id,)))
-        except (KeyError, VoteIP.MultipleObjectsReturned):
-            return render_to_response('grrbl/detail.html', {
-            'ips': p,
-            'error_message': "You have voted already.",
-        }, context_instance=RequestContext(request))
-        else:
-            selected_ip.votes += int(request.POST['vote'])
-            selected_ip.save()
-            return HttpResponseRedirect(reverse('ip_details', args=(p.id,)))
+        vote_value = int(request.POST['vote'])
+    except ValueError, KeyError:
+        # Malformed POST value
+        raise
+
+    try:
+        vote = Vote.objects.get(content_type=content_type,
+                                object_id=objekt.id,
+                                user=request.user)
+        # Subtract the previous vote value
+        objekt.votes -= vote.vote
+    except Vote.DoesNotExist:
+        vote = Vote(user=request.user, item=objekt, vote=int(request.POST['vote']))
+
+    vote.vote = vote_value
+    objekt.votes += vote_value
+    objekt.save()
+    vote.save()
+    return HttpResponseRedirect(request.META['HTTP_REFERER'])
