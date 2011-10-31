@@ -48,7 +48,7 @@ def vote(request, object_type, object_id):
 
     try:
         vote_value = int(request.POST['vote'])
-    except ValueError, KeyError:
+    except (ValueError, KeyError):
         # Malformed POST value
         return HttpResponseBadRequest("Bad vote value")
 
