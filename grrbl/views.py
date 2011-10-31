@@ -10,7 +10,7 @@ from django.contrib.auth.decorators import login_required
 from grrbl.models import *
 from django.core.urlresolvers import reverse
 from django.contrib.contenttypes.models import ContentType
-from django.http import HttpResponseRedirect
+from django.http import HttpResponseRedirect, HttpResponseForbidden, HttpResponseBadRequest
 
 def logout_page(request):
     """
@@ -43,13 +43,14 @@ def vote(request, object_type, object_id):
 
     objekt = get_object_or_404(object_class, pk=object_id)
     if not isinstance(objekt, VotableObject):
-        raise "Will not add vote to a non-votable object"
+        return HttpResponseForbidden("Will not add vote to a"
+                                     " non-votable object")
 
     try:
         vote_value = int(request.POST['vote'])
     except ValueError, KeyError:
         # Malformed POST value
-        raise
+        return HttpResponseBadRequest("Bad vote value")
 
     try:
         vote = Vote.objects.get(content_type=content_type,
