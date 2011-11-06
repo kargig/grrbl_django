@@ -1,4 +1,5 @@
 {% extends "grrbl/grrbl.html" %}
+{% load i18n %}
 {% load class_name %}
 
 {% block title %}
@@ -9,14 +10,14 @@ Details
 <h2>{{ object.ipaddress }} </h2>
 <h3>{{ object.get_b_or_w_display }} added on {{ object.dateadded }} by {{ object.reportedby }}</h3>
 <br>
-Last update on {{ object.updated }}
-<br>
-Further info: {{ object.attacknotes }}<br>
-Curent Votes: {{ object.votes }}
+<p>Last update on {{ object.updated }}</p>
+<p>Further info: {{ object.attacknotes }}</p>
+<p>Curent Votes: {{ object.votes }}</p>
 {% if error_message %}
 <p><strong>{{ error_message }}</strong></p>
 {% endif %}
 
+<p>
 <form action="{% url grrbl.views.vote object|class_name|lower object.id %}" method="post">
 	{% csrf_token %}
 	<select name="vote">
@@ -27,4 +28,10 @@ Curent Votes: {{ object.votes }}
 
 	<input type="submit" value="vote" />
 </form>
+</p>
+
+{% if perms.grrbl.is_superuser %}
+   <p>Administrative: {% trans "Edit this entry" %}? <a href={% url admin:grrbl_ip_change object.id %}>{% trans "Edit it" %}</a>!</p>
+{% endif %}
+
 {% endblock %}
