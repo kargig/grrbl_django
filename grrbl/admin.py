@@ -3,11 +3,24 @@ from django.contrib import admin
 from django.contrib.auth.admin import UserAdmin,GroupAdmin
 from django.contrib.auth.models import User,Group
 from models import UserProfile,GroupProfile
+from django.core.urlresolvers import reverse
 
 class IPAdmin(admin.ModelAdmin):
     search_fields = ['ipaddress','dateadded']
     date_hierarchy = 'dateadded'
     list_display = ('ipaddress', 'dateadded', 'b_or_w', 'votes' )
+
+    def change_view(self, request, object_id, extra_context=None):
+        result = super(IPAdmin, self).change_view(request, object_id, extra_context)
+        if not request.POST.has_key('_addanother') and not request.POST.has_key('_continue'):
+            result['Location'] = reverse('ip_list')
+        return result
+    
+    def add_view(self, request):
+        result = super(IPAdmin, self).add_view(request)
+        if not request.POST.has_key('_addanother') and not request.POST.has_key('_continue'):
+            result['Location'] = reverse('ip_list')
+        return result
 
 admin.site.register(IP, IPAdmin)
 
@@ -23,6 +36,18 @@ class EmailAdmin(admin.ModelAdmin):
     search_fields = ['emailaddress','dateadded']
     date_hierarchy = 'dateadded'
     list_display = ('emailaddress', 'dateadded', 'b_or_w', 'votes' )
+
+    def change_view(self, request, object_id, extra_context=None):
+        result = super(EmailAdmin, self).change_view(request, object_id, extra_context)
+        if not request.POST.has_key('_addanother') and not request.POST.has_key('_continue'):
+            result['Location'] = reverse('email_list')
+        return result
+    
+    def add_view(self, request):
+        result = super(EmailAdmin, self).add_view(request)
+        if not request.POST.has_key('_addanother') and not request.POST.has_key('_continue'):
+            result['Location'] = reverse('email_list')
+        return result
 
 admin.site.register(Email, EmailAdmin)
 

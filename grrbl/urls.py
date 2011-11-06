@@ -18,11 +18,11 @@ urlpatterns = patterns('',
     (r'^iplist/$','grrbl.views.auth_list', {
         'queryset': IP.objects.all().order_by('-dateadded'),
         'template_name': 'grrbl/iplist.html',
-    }),
+    }, 'ip_list'),
     (r'^emaillist/$','grrbl.views.auth_list', {
         'queryset': Email.objects.all().order_by('-dateadded'),
         'template_name': 'grrbl/emaillist.html',
-    }),
+    }, 'email_list'),
     (r'^ipdetails/(?P<object_id>\d+)/$', 'django.views.generic.list_detail.object_detail',
         dict(ip_dict,template_name='grrbl/ipdetail.html'), 'ip_details'),
     (r'^emaildetails/(?P<object_id>\d+)/$', 'django.views.generic.list_detail.object_detail',
