@@ -17,6 +17,7 @@ Details
 <p><strong>{{ error_message }}</strong></p>
 {% endif %}
 
+{% if user.is_authenticated %}
 <p>
 <form action="{% url grrbl.views.vote object|class_name|lower object.id %}" method="post">
 	{% csrf_token %}
@@ -29,7 +30,10 @@ Details
 	<input type="submit" value="vote" />
 </form>
 </p>
+{% endif %}
+
 {% if perms.grrbl.is_superuser %}
    <p>Administrative: {% trans "Edit this entry" %}? <a href={% url admin:grrbl_email_change object.id %}>{% trans "Edit it" %}</a>!</p>
 {% endif %}
+
 {% endblock %}
