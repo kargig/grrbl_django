@@ -29,9 +29,19 @@ def main_page(request):
     return render_to_response('grrbl/index.html')
 
 
+def my_ipdetail(request,ipaddress):
+    objekt = get_object_or_404(IP, ipaddress=ipaddress)
+    qs = IP.objects.all()
+    return object_detail(request, qs, object_id=objekt.id, template_name='grrbl/ipdetail.html') 
+
+def my_emdetail(request,emailaddress):
+    objekt = get_object_or_404(Email, emailaddress=emailaddress)
+    qs = Email.objects.all()
+    return object_detail(request, qs, object_id=objekt.id, template_name='grrbl/emaildetail.html') 
+
 @login_required 
 def auth_list(*args, **kwargs):
-        return object_list(*args, **kwargs) 
+    return object_list(*args, **kwargs) 
 
 
 @login_required
