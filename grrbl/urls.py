@@ -31,5 +31,7 @@ urlpatterns = patterns('',
         dict(email_dict,template_name='grrbl/emaildetail.html'), 'email_details'),
     (r'^details/(?P<object_type>\w+)/(?P<object_id>\d+)/vote/$', 'grrbl.views.vote'),
     (r'^login/$', 'django.contrib.auth.views.login'),
-    (r'^logout/$', logout)
+    (r'^logout/$', logout),
+    (r'^accounts/', include('captcha.backends.default.urls')),
+    (r'^accounts/', include('registration.backends.default.urls')),
 )

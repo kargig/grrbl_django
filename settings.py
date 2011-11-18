@@ -12,7 +12,7 @@ MANAGERS = ADMINS
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.sqlite3', # Add 'postgresql_psycopg2', 'postgresql', 'mysql', 'sqlite3' or 'oracle'.
-        'NAME': '/PATH/TO/grrbl_django/djangodb',                      # Or path to database file if using sqlite3.
+        'NAME': 'djangodb',                      # Or path to database file if using sqlite3.
         'USER': '',                      # Not used with sqlite3.
         'PASSWORD': '',                  # Not used with sqlite3.
         'HOST': '',                      # Set to empty string for localhost. Not used with sqlite3.
@@ -81,7 +81,7 @@ TEMPLATE_DIRS = (
     # Put strings here, like "/home/html/django_templates" or "C:/www/django/templates".
     # Always use forward slashes, even on Windows.
     # Don't forget to use absolute paths, not relative paths.
-    '/PATH/TO/grrbl_django/templates',
+    'templates',
 )
 
 INSTALLED_APPS = (
@@ -94,8 +94,12 @@ INSTALLED_APPS = (
     'django.contrib.admin',
     # Uncomment the next line to enable admin documentation:
     # 'django.contrib.admindocs',
+    'captcha',
+    'registration',
     'grrbl',
 )
+
+ACCOUNT_ACTIVATION_DAYS = 7
 
 TEMPLATE_CONTEXT_PROCESSORS = (
             "django.contrib.auth.context_processors.auth",
@@ -103,3 +107,10 @@ TEMPLATE_CONTEXT_PROCESSORS = (
 )
 LOGIN_URL='/grrbl/login/'
 AUTH_PROFILE_MODULE = 'grrbl.UserProfile'
+
+#EMAIL_HOST = ''
+#EMAIL_PORT = 
+EMAIL_USE_TLS = 1
+RECAPTCHA_PUBLIC_KEY = ''
+RECAPTCHA_PRIVATE_KEY = ''
+RECAPTCHA_USE_SSL = True

@@ -21,7 +21,9 @@ This is the main template for all portal pages.
             <li><a href="/grrbl/">home</a></li>
             <li><a href="/grrbl/iplist/">IP listing</a></li>
             <li><a href="/grrbl/emaillist/">Email listing</a></li>
-            <li><a href="/grrbl/logout/">logout</a></li>
+            {% if user.is_authenticated %}
+            <li><a href="/grrbl/accounts/logout/">logout</a></li>
+            {% endif %}
         </ul>
     </section>
 
