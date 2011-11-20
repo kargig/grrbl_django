@@ -36,7 +36,6 @@ class IPform(ModelForm):
     class Meta:
         model = IP
 
-
 class Email(VotableObject):
     emailaddress = models.EmailField()
     dateadded    = models.DateTimeField('date added')
@@ -69,10 +68,6 @@ class Vote(models.Model):
 class UserProfile(models.Model):
     user = models.OneToOneField(User)
 
-    # Extra fields
-    koko = models.BooleanField(default=False, blank=True)
-    lala = models.CharField(max_length=20, default="foobar", blank=True)
-    
     def __unicode__(self):
         return self.user.username
 
